@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MuleConnect Wall</title>
+</head>
+<body>
+  <h1>Community Wall 🧱</h1>
+  <form action="/add" method="post">
+    <input type="text" name="name" placeholder="Your name" required>
+    <input type="text" name="message" placeholder="What's on your mind?" required>
+    <button type="submit">Post</button>
+  </form>
+
+  <ul>
+    {% for post in posts %}
+      <li><strong>{{ post.name }}</strong>: {{ post.message }}</li>
+    {% endfor %}
+  </ul>
+</body>
+</html>

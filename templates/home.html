@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MuleConnect | Home</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<!-- Fullscreen Image Modal -->
+<div id="imageModal" class="image-modal" onclick="hideFullImage()">
+  <span class="close">&times;</span>
+  <img class="modal-content" id="modalImage">
+</div>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">MuleConnect</div>
+    <ul class="nav-links">
+      <li><a href="#hero">Home</a></li>
+      <li><a href="#stories">Stories</a></li>
+      <li><a href="{{ url_for('create_mentorship_post') }}">Mentorship</a></li>
+      <li><a href="{{ url_for('signup') }}">Sign Up</a></li>
+      <li><a href="#events">Events</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero Section -->
+  <header id="hero" class="hero-section">
+    <div class="hero-overlay">
+      <h1>Welcome to MuleConnect</h1>
+      <p>Where UCM students & alumni share, grow, and thrive together.</p>
+      <a href="{{ url_for('signup') }}" class="cta-btn">Join Our Community</a>
+    </div>
+  </header>
+
+  <!-- Community Wall -->
+  <section id="stories" class="section community-wall">
+    <h2>Community Wall</h2>
+    <p class="subtitle">Real experiences from the UCM community. Share your story!</p>
+
+    <!-- Post Submission Form -->
+    <form method="POST" enctype="multipart/form-data" class="post-form">
+      <textarea name="content" placeholder="What's on your mind, Mule?" required></textarea>
+      <div class="post-actions">
+        <input type="file" name="image" accept="image/*" />
+        <button type="submit" class="btn-post">Post</button>
+      </div>
+    </form>
+
+    <!-- Posts Display -->
+    <div class="posts-container">
+      {% for post in posts %}
+        <div class="post-card">
+          <div class="post-header">
+            <strong>@{{ post.username }}</strong>
+            <span>{% if post.timestamp %}
+              {{ post.timestamp.strftime('%b %d, %Y %I:%M %p') }}
+            {% else %}
+              Unknown time
+            {% endif %}</span>
+          </div>
+          <p>{{ post.content }}</p>
+          {% if post.image %}
+          <img src="{{ url_for('static', filename='uploads/' ~ post.image) }}" 
+          alt="Post image" 
+          class="post-thumbnail" 
+          onclick="showFullImage(this.src)" />
+          {% endif %}
+        </div>
+      {% else %}
+        <p>No posts yet. Be the first to share something!</p>
+      {% endfor %}
+    </div>
+
+    <!-- Pagination Controls -->
+    <div class="pagination-controls">
+      {% if page > 1 %}
+        <a href="{{ url_for('home', page=page-1) }}" class="pagination-btn">« Previous</a>
+      {% endif %}
+      <span>Page {{ page }} of {{ total_pages }}</span>
+      {% if page < total_pages %}
+        <a href="{{ url_for('home', page=page+1) }}" class="pagination-btn">Next »</a>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- Connect Sections -->
+  <section class="connect-section" id="events">
+    <div class="card-container">
+      <div class="info-card">
+        <h3>🤝 Mentorship</h3>
+        <p>Connect with mentors and mentees to grow your career journey.</p>
+      </div>
+      <div class="info-card">
+        <h3>💼 Job Opportunities</h3>
+        <p>Find internships, job openings, or share an opportunity with the community.</p>
+      </div>
+      <div class="info-card">
+        <h3>📅 Events</h3>
+        <p>Attend webinars, alumni talks, and upcoming meetups around UCM.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chatbot -->
+  <div class="chatbot">
+    <div class="chat-icon" onclick="toggleChat()">
+      <i class="fas fa-comment-dots"></i>
+    </div>
+    <div class="chat-window" id="chatWindow">
+      <div class="chat-header">
+        <span>MuleBot</span>
+        <button onclick="toggleChat()">×</button>
+      </div>
+      <div class="chat-body">
+        <p>Hi 👋 I'm here to help with anything MuleConnect related.</p>
+        <p>Ask about stories, jobs, events, or how to connect with alumni.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    © 2025 University of Central Missouri | Built with ❤️ by MuleConnect Team
+  </footer>
+
+  <script defer src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MuleConnect | {{ mode|title }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #ffe6e1, #fff5f3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .auth-card {
+      display: flex;
+      flex-direction: row;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      max-width: 1000px;
+      width: 100%;
+    }
+    .auth-image-section {
+      background: #fefefe;
+      padding: 40px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .auth-image-section img.logo {
+      height: 60px;
+      margin-bottom: 20px;
+    }
+    .auth-image-section img.banner {
+      width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+    .auth-form-section {
+      flex: 1;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .auth-form-section h2 {
+      color: #8b0000;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    .input-group {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      font-size: 15px;
+    }
+    .password-wrapper {
+      position: relative;
+    }
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      top: 38px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .btn-primary {
+      width: 100%;
+      padding: 12px;
+      background-color: #b22222;
+      color: white;
+      border: none;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .btn-primary:hover {
+      background-color: #8b0000;
+    }
+    .links {
+      text-align: center;
+      margin-top: 16px;
+    }
+    .links a {
+      color: #b22222;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    footer {
+      text-align: center;
+      font-size: 14px;
+      color: #888;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-card">
+    <div class="auth-image-section">
+      <img src="{{ url_for('static', filename='images/mule.png') }}" alt="MuleConnect Logo" class="logo">
+      <img src="{{ url_for('static', filename='images/uni.png') }}" alt="University Image" class="banner">
+    </div>
+    <div class="auth-form-section">
+      <h2>{{ mode|title }}</h2>
+      <form method="POST">
+        {% if mode == 'signup' %}
+          <div class="input-group">
+            <label for="username">Username</label>
+            <input type="text" name="username" id="username" required>
+          </div>
+          <div class="input-group">
+            <label for="email">Email</label>
+            <input type="email" name="email" id="email" required>
+          </div>
+          <div class="input-group">
+            <label for="user_type">I am a...</label>
+            <select id="user_type" name="user_type" required>
+              <option value="" disabled selected>Select your role</option>
+              <option value="student">Student</option>
+              <option value="alumni">Alumni</option>
+              <option value="professional">Professional</option>
+              <option value="faculty">Faculty</option>
+            </select>
+          </div>
+        {% else %}
+          <div class="input-group">
+            <label for="username">Username</label>
+            <input type="text" name="username" id="username" required>
+          </div>
+        {% endif %}
+
+        <div class="input-group password-wrapper">
+          <label for="password">Password</label>
+          <input type="password" name="password" id="password" required>
+          <span class="toggle-password" onclick="togglePassword()">👁</span>
+        </div>
+
+        <button class="btn-primary" type="submit">{{ mode|title }}</button>
+
+        <div class="links">
+          {% if mode == 'signup' %}
+            <p>Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
+          {% else %}
+            <p>Don't have an account? <a href="{{ url_for('signup') }}">Sign up</a></p>
+          {% endif %}
+          <p><a href="{{ url_for('home') }}">Go to Home Page</a></p>
+        </div>
+      </form>
+    </div>
+  </div>
+  <footer>
+    &copy; 2025 University of Central Missouri | Built with ❤️ by MuleConnect Team
+  </footer>
+  <script>
+    function togglePassword() {
+      const pwd = document.getElementById('password');
+      pwd.type = pwd.type === 'password' ? 'text' : 'password';
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Post a Job | MuleConnect</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #fff5f3;
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .form-container {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .form-container h2 {
+      text-align: center;
+      color: #8b0000;
+      margin-bottom: 25px;
+      font-size: 22px;
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    input, textarea, select, button {
+      font-size: 15px;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+      grid-column: span 2;
+    }
+
+    button {
+      grid-column: span 2;
+      background-color: #8b0000;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #a10000;
+    }
+
+    .form-footer {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .form-footer a {
+      color: #8b0000;
+      font-weight: bold;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Post a Job Opportunity</h2>
+    <form method="POST">
+      <input type="text" name="title" placeholder="Job Title" required>
+      <input type="text" name="posted_by" placeholder="Posted By (Name or Role)" required>
+      <textarea name="description" placeholder="Job Description" required></textarea>
+      <input type="email" name="contact_info" placeholder="Email or Contact Info" required>
+      <input type="text" name="tags" placeholder="Tags (comma separated)">
+
+      <select name="location" required>
+        <option value="">Select Location</option>
+        <option value="Remote">Remote</option>
+        <option value="Missouri">Missouri</option>
+        <option value="California">California</option>
+      </select>
+
+      <select name="job_type" required>
+        <option value="">Select Job Type</option>
+        <option value="Internship">Internship</option>
+        <option value="Full-time">Full-time</option>
+        <option value="Part-time">Part-time</option>
+        <option value="Contract">Contract</option>
+      </select>
+
+      <button type="submit">Submit Job</button>
+    </form>
+
+    <div class="form-footer">
+      <p><a href="{{ url_for('jobs') }}">← View All Job Posts</a></p>
+    </div>
+  </div>
+</body>
+</html>

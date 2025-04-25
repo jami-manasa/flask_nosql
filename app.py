@@ -250,9 +250,12 @@ def send_request():
 
 
 
+# events
 
-
-
+@app.route('/events')
+def events():
+    events_data = list(db.events.find().sort("date", 1))  # upcoming events first
+    return render_template("events.html", events=events_data)
 
 
 

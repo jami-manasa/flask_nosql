@@ -53,24 +53,46 @@
     .main-content {
       flex: 1;
       padding: 40px;
-      background: url('{{ url_for('static', filename='images/ucm1.jpg') }}') no-repeat center center/cover;
+      background: url('{{ url_for('static', filename='images/ucm1.jpkng') }}') no-repeat center center/cover;
       display: flex;
       flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
     .main-header {
       font-size: 28px;
       color: #8b0000;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
       display: flex;
       align-items: center;
       gap: 10px;
     }
     .content-area {
-      background: rgba(255, 255, 255, 0.9);
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-      max-width: 900px;
+      background: rgba(255, 255, 255, 0.92);
+      padding: 30px 40px;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+      max-width: 750px;
+      text-align: left;
+    }
+    .content-area p {
+      font-size: 16px;
+      color: #444;
+      margin-bottom: 16px;
+    }
+    .content-area ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .content-area ul li {
+      margin: 8px 0;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+    }
+    .content-area ul li i {
+      margin-right: 8px;
+      color: #b22222;
     }
     .logout {
       font-size: 14px;
@@ -95,11 +117,13 @@
           <a href="{{ url_for('mentorship_posts') }}"><i class="fas fa-handshake"></i> View Mentorship Offers</a>
           <a href="{{ url_for('create_mentorship_post') }}"><i class="fas fa-user-plus"></i> Request Mentorship</a>
           <a href="{{ url_for('home') }}"><i class="fas fa-users"></i> Community Wall</a>
+          <a href="{{ url_for('events') }}"><i class="fas fa-calendar-alt"></i> Events</a>
         {% else %}
           <a href="{{ url_for('post_job') }}"><i class="fas fa-plus-circle"></i> Post a Job</a>
           <a href="{{ url_for('jobs') }}"><i class="fas fa-briefcase"></i> View All Jobs</a>
           <a href="{{ url_for('mentorship_posts') }}"><i class="fas fa-handshake"></i> Mentorship Requests</a>
           <a href="{{ url_for('home') }}"><i class="fas fa-users"></i> Community Wall</a>
+          <a href="{{ url_for('events') }}"><i class="fas fa-calendar-alt"></i> Events</a>
         {% endif %}
       </div>
     </div>
@@ -117,7 +141,14 @@
       {% endif %}
     </div>
     <div class="content-area">
-      <p>Select an action from the sidebar to begin exploring or contributing to the MuleConnect community.</p>
+      <p>Welcome to MuleConnect! Here, you can connect, grow, and engage with the University of Central Missouri community.</p>
+      <p><strong>⭐ Quick Highlights:</strong></p>
+      <ul>
+        <li><i class="fas fa-check-square"></i> Students can view job and mentorship opportunities.</li>
+        <li><i class="fas fa-user-tie"></i> Alumni and professionals can offer guidance or post openings.</li>
+        <li><i class="fas fa-calendar-alt"></i> Check the latest events and networking sessions.</li>
+        <li><i class="fas fa-comments"></i> Share your story with the community wall.</li>
+      </ul>
     </div>
   </div>
 </body>

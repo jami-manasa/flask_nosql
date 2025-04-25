@@ -1,64 +1,124 @@
 <!DOCTYPE html>
-<html lang="en"> 
-<head> 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard</title>
-
-    <!-- Load CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-
-    <!-- FontAwesome for Icons -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
-
-    <!-- jQuery and Bootstrap -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MuleConnect Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #ffe6e1, #fff5f3);
+      display: flex;
+      height: 100vh;
+    }
+    .sidebar {
+      width: 260px;
+      background-color: #ffffff;
+      box-shadow: 4px 0 12px rgba(0, 0, 0, 0.05);
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .sidebar h2 {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    .sidebar .welcome {
+      margin-bottom: 20px;
+    }
+    .sidebar .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .sidebar .nav a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sidebar .nav a:hover {
+      color: #8b0000;
+    }
+    .main-content {
+      flex: 1;
+      padding: 40px;
+      background: url('{{ url_for('static', filename='images/ucm1.jpg') }}') no-repeat center center/cover;
+      display: flex;
+      flex-direction: column;
+    }
+    .main-header {
+      font-size: 28px;
+      color: #8b0000;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .content-area {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      max-width: 900px;
+    }
+    .logout {
+      font-size: 14px;
+      color: #444;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .logout:hover {
+      color: #b22222;
+    }
+  </style>
 </head>
 <body>
-
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        
-        <!-- Sidebar Toggle Button -->
-        <button class="toggle-btn" id="toggle-sidebar"><i class="fas fa-bars"></i></button>
-        
-        <div class="profile">
-            <img src="{{ url_for('static', filename='images/auth-image.png') }}" alt="Profile Image" class="profile-image">
-            <h4 class="profile-name">{{ session['username'] }}</h4>
-            <p class="profile-designation">UI/UX Designer</p>
-        </div>
-
-        <ul class="sidebar-menu">
-            <li><a href="{{ url_for('dashboard') }}" class="nav-link"><i class="fas fa-th"></i> &nbsp;<span>Dashboard</span></a></li>
-            <li><a href="{{ url_for('profile') }}" class="nav-link"><i class="fas fa-user"></i> <span>&nbsp;Profile</span></a></li>
-            <li><a href="{{ url_for('settings') }}" class="nav-link"><i class="fas fa-cog"></i> <span>&nbsp;Settings</span></a></li>
-            <li>
-                <a href="{{ url_for('logout') }}" id="logout-button">
-                    <i class="fas fa-sign-out-alt"></i> <span>&nbsp;Logout</span>
-                </a>
-            </li>
-        </ul>
-
-        <!-- 🌙 Dark Mode Toggle -->
-        <div class="dark-mode-toggle">
-            <label class="switch">
-                <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mode</span><input type="checkbox" id="darkModeToggle">
-                <span class="slider"></span>
-            </label>
-        </div>
+  <div class="sidebar">
+    <div>
+      <h2>👋 Welcome, {{ session['username'] }}!</h2>
+      <p class="welcome">Logged in as: <strong>{{ session['user_type'].title() }}</strong></p>
+      <div class="nav">
+        {% if session['user_type'] == 'student' %}
+          <a href="{{ url_for('jobs') }}"><i class="fas fa-briefcase"></i> View Job Posts</a>
+          <a href="{{ url_for('mentorship_posts') }}"><i class="fas fa-handshake"></i> View Mentorship Offers</a>
+          <a href="{{ url_for('create_mentorship_post') }}"><i class="fas fa-user-plus"></i> Request Mentorship</a>
+          <a href="{{ url_for('home') }}"><i class="fas fa-users"></i> Community Wall</a>
+        {% else %}
+          <a href="{{ url_for('post_job') }}"><i class="fas fa-plus-circle"></i> Post a Job</a>
+          <a href="{{ url_for('jobs') }}"><i class="fas fa-briefcase"></i> View All Jobs</a>
+          <a href="{{ url_for('mentorship_posts') }}"><i class="fas fa-handshake"></i> Mentorship Requests</a>
+          <a href="{{ url_for('home') }}"><i class="fas fa-users"></i> Community Wall</a>
+        {% endif %}
+      </div>
     </div>
-
-    <!-- Main Content Area -->
-    <div class="content" id="content">
-        <h2>Welcome, {{ session['username'] }}!</h2>
-        <div id="dynamic-content">
-            <p>Select a feature from the sidebar.</p>
-        </div>
+    <div>
+      <a href="{{ url_for('logout') }}" class="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </div>
+  </div>
 
-    <!-- Load JavaScript -->
-    <script defer src="{{ url_for('static', filename='js/script.js') }}"></script>
-
+  <div class="main-content">
+    <div class="main-header">
+      {% if session['user_type'] == 'student' %}
+        🔍 Explore Opportunities
+      {% else %}
+        📢 Manage & Offer Opportunities
+      {% endif %}
+    </div>
+    <div class="content-area">
+      <p>Select an action from the sidebar to begin exploring or contributing to the MuleConnect community.</p>
+    </div>
+  </div>
 </body>
 </html>

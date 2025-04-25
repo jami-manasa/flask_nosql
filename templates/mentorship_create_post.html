@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Create Mentorship Post | MuleConnect{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card shadow-lg">
+    <div class="card-header bg-danger text-white">
+      <h4 class="mb-0">📝 Create Mentorship Post</h4>
+    </div>
+    <div class="card-body">
+      <form method="POST">
+        <div class="mb-3">
+          <label for="mentorship_type" class="form-label">Mentorship Type</label>
+          <select name="mentorship_type" id="mentorship_type" class="form-select" required>
+            <option value="" disabled selected>Select type</option>
+            <option value="offer">Offer Mentorship</option>
+            <option value="request">Request Mentorship</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="title" class="form-label">Title</label>
+          <input type="text" name="title" id="title" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="expertise_area" class="form-label">Expertise Area</label>
+          <input type="text" name="expertise_area" id="expertise_area" class="form-control" placeholder="E.g., Data Science, Career Guidance" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="description" class="form-label">Description</label>
+          <textarea name="description" id="description" class="form-control" rows="4" placeholder="Provide more details..." required></textarea>
+        </div>
+
+        <div class="d-grid">
+          <button type="submit" class="btn btn-danger fw-bold">Submit Post</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

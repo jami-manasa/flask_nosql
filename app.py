@@ -6,7 +6,12 @@ from werkzeug.utils import secure_filename
 from datetime import datetime, timedelta
 import os
 import uuid
-
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+from pymongo import MongoClient
+from datetime import datetime
+import os
+from flask import request, redirect, url_for, render_template, session
+from datetime import datetime
 # Load environment variables from .env
 load_dotenv()
 
@@ -28,7 +33,6 @@ db = client[db_name]
 # Define your users collection
 users_collection = db["users"]
 
-
 @app.route('/post-job', methods=['GET', 'POST'])
 def post_job():
     if request.method == 'POST':
@@ -43,22 +47,17 @@ def post_job():
             "timestamp": datetime.utcnow()
         }
 
-        print("✅ Job Submitted:", job)
         db.jobs.insert_one(job)
-        return redirect(url_for('jobs'))  # Redirect to job list after submission
+        return redirect(url_for('jobs'))
 
     return render_template("post_job.html")
-
-# --- Route to view all jobs ---
-
 
 @app.route('/jobs')
 def jobs():
     query = request.args.get('q', '').strip()
     page = int(request.args.get('page', 1))
-    per_page = 18  # show more jobs per page to fill screen as you requested
+    per_page = 18
 
-    # Build a MongoDB search filter
     search_filter = {}
     if query:
         search_filter = {
@@ -70,7 +69,6 @@ def jobs():
             ]
         }
 
-    # Count and fetch paginated results
     total_jobs = db.jobs.count_documents(search_filter)
     jobs_cursor = (
         db.jobs.find(search_filter)
@@ -78,19 +76,11 @@ def jobs():
         .skip((page - 1) * per_page)
         .limit(per_page)
     )
-
     jobs = list(jobs_cursor)
-    total_pages = (total_jobs + per_page - 1) // per_page  # ceil logic
+    total_pages = (total_jobs + per_page - 1) // per_page
 
-    return render_template("jobs.html",
-                           jobs=jobs,
-                           query=query,
-                           page=page,
-                           total_pages=total_pages)
+    return render_template("jobs.html", jobs=jobs, query=query, page=page, total_pages=total_pages)
 
-
-
-# Ensure 'uploads' folder exists in static
 UPLOAD_FOLDER = os.path.join('static', 'uploads')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -118,7 +108,6 @@ def home():
         db.mule.insert_one(post)
         return redirect(url_for('home'))
 
-    # Pagination setup
     page = int(request.args.get('page', 1))
     per_page = 5
     total_posts = db.mule.count_documents({})
@@ -127,15 +116,6 @@ def home():
     posts = list(posts_cursor)
 
     return render_template("home.html", posts=posts, page=page, total_pages=(total_posts + per_page - 1) // per_page)
-
-# MongoDB setup
-
-# Routes
-
-# @app.route('/')
-# def home():
-#     posts = list(db.mule.find().sort("timestamp", -1))
-#     return render_template("home.html", posts=posts)
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -170,12 +150,12 @@ def login():
         password = request.form['password']
 
         user = users_collection.find_one({'username': username})
- 
+
         if user and check_password_hash(user['password'], password):
             session['username'] = user['username']
             session['user_type'] = user['user_type']
             flash('🎉 Logged in successfully!')
-            return redirect(url_for('home'))  # or dashboard
+            return redirect(url_for('dashboard'))  # ⬅️ Important: redirect to dashboard
 
         flash('❌ Invalid username or password.')
         return redirect(url_for('login'))
@@ -193,7 +173,97 @@ def logout():
 def dashboard():
     if 'username' not in session:
         return redirect(url_for('login'))
-    return f"Hello, {session['username']}! You're logged in as a {session['user_type']}."
+
+    user_type = session.get('user_type')
+
+    return render_template("dashboard.html", user_type=user_type, username=session.get("username"))
+
+
+
+
+
+
+
+# ===========================
+# 1. Create Mentorship Post
+# ===========================
+@app.route('/create-mentorship-post', methods=['GET', 'POST'])
+def create_mentorship_post():
+    if request.method == 'POST':
+        post_type = request.form.get("mentorship_type")  # 'offer' or 'request'
+        title = request.form.get("title")
+        description = request.form.get("description")
+        expertise_area = request.form.get("expertise_area")
+        username = session.get("username", "anonymous")
+
+        post = {
+            "username": username,
+            "title": title,
+            "description": description,
+            "expertise_area": expertise_area,
+            "mentorship_type": post_type,
+            "timestamp": datetime.utcnow()
+        }
+
+        db.mentorship_posts.insert_one(post)
+        flash("✅ Your mentorship post has been submitted!")
+        return redirect(url_for('mentorship_posts'))
+
+    return render_template("mentorship_create_post.html")
+
+# ===========================
+# 2. View Mentorship Posts
+# ===========================
+@app.route('/mentorship-posts')
+def mentorship_posts():
+    offers = list(db.mentorship_posts.find({"mentorship_type": "offer"}).sort("timestamp", -1))
+    requests = list(db.mentorship_posts.find({"mentorship_type": "request"}).sort("timestamp", -1))
+
+    return render_template("posts.html", offers=offers, requests=requests)
+
+# ===========================
+# 3. Send Mentorship Request
+# ===========================
+@app.route('/send_request', methods=['POST'])
+def send_request():
+    mentor = request.form.get("mentor")
+    message = request.form.get("message")
+    student = session.get("username", "anonymous")
+
+    entry = {
+        "mentor": mentor,
+        "student": student,
+        "message": message,
+        "status": "pending",
+        "timestamp": datetime.utcnow()
+    }
+
+    db.mentorship_requests.insert_one(entry)
+    flash("📩 Your mentorship request has been sent!")
+    return redirect(url_for("mentorship_posts"))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 @app.route('/profile')
@@ -208,26 +278,8 @@ def settings():
 def reports():
     return render_template("reports.html")
 
-@app.route('/create-mentorship-post', methods=['GET', 'POST'])
-def create_mentorship_post():
-    if request.method == 'POST':
-        # handle post creation logic
-        return redirect(url_for('mentorship_posts'))
-    return render_template("create_post.html")
 
-@app.route('/mentorship-posts')
-def mentorship_posts():
-    offers = list(db.mule.find({"type": "offer"}))
-    requests = list(db.mule.find({"type": "request"}))
-    return render_template("posts.html", offers=offers, requests=requests)
 
-# Example POST route (optional)
-@app.route('/send_request', methods=['POST'])
-def send_request():
-    mentor = request.form.get("mentor")
-    message = request.form.get("message")
-    db.requests.insert_one({"mentor": mentor, "message": message})
-    return redirect(url_for("mentorship_posts"))
 
 if __name__ == '__main__':
     app.run(debug=True)

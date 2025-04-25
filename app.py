@@ -170,7 +170,7 @@ def login():
         password = request.form['password']
 
         user = users_collection.find_one({'username': username})
-
+ 
         if user and check_password_hash(user['password'], password):
             session['username'] = user['username']
             session['user_type'] = user['user_type']
